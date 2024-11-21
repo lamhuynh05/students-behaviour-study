@@ -48,6 +48,7 @@ Does the amount of caffeine consumed impact an individual's productivity after d
 <img width="672" alt="Screenshot 2024-11-22 at 1 07 04 am" src="https://github.com/user-attachments/assets/c4f2e265-790b-46e6-a898-88a97f3dd248">
 
 
+
 The method used for this question involved the use of two graphs to analyse the correlation between caffeine consumption and productivity. Initially, a box plot was used to depict the difference between caffeine consumption (dependent variable) among individuals with differing past performances (independent variable). 
 
 This plot was seen to be skewed to the right, with a mean surpassing its median. 
@@ -67,10 +68,12 @@ What is the relationship between the number of meals students eat and their prod
 
 <img width="680" alt="Screenshot 2024-11-22 at 1 08 14 am" src="https://github.com/user-attachments/assets/a9c7b3f7-cd0a-4d27-bd4e-674f92aad46f">
 
+
 The linear graph displays the relationship between two quantitative variables assessed: The frequency of food consumption per day (including meals, snacks and beverages) and the individual's productivity an hour after eating, measured on a scale of 1 to 10. 
 
 The correlation coefficient (0.3, 2 d.p), suggests a weak, positive correlation between the 2 variables. While there may be a linear trend between the frequency of meals and productivity an hour after eating, the data suggests the relationship may better suit a normal approximation as there was a higher frequency of responses in the middle of the data set and less towards the extremities, in particular the higher values.
 
 <img width="677" alt="Screenshot 2024-11-22 at 1 08 52 am" src="https://github.com/user-attachments/assets/14166aea-f6b9-40ca-993a-fa8a98c20498">
+
 
 Linear plots have an entirely random distribution of data unlike the residual which shows a symmetrical pattern. As a result, a normal approximation may be a better choice for the model because the data is not well suited for a linear graph, aligning with the models expectations.
