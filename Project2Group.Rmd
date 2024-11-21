@@ -1,0 +1,219 @@
+---
+title: "Project 2"
+subtitle: "The relationship between eating habits and productivity."
+author: "SID 1: 540082847 |SID 2: 540709069 |SID 3: 530585662 |SID 4: 540714801|SID 5: 530467494 |SID 6: 510191182| SID 7: 530012951"
+date: "University of Sydney | DATA1001 | April 2024"
+output:
+  html_document:
+    fig_caption: yes
+    number_sections: yes
+    self_contained: yes
+    theme: flatly
+    # Other themes can be found at: https://bootswatch.com/
+    css: 
+      - https://use.fontawesome.com/releases/v5.0.6/css/all.css
+    #This will allow you to insert icons in your document, thanks to [Font Awesome](http://fontawesome.io).
+    #You will find an examples below.
+    # If you are knitting your document but not connected to the internet, place a "#" in front of the css line above with the font-awesome.min.css line to comment it out. This will let you knit the document in draft form until you connect again and knit the final. Note that when you do this some elements will be missing from the knitted slides. 
+    toc: true
+    #This adds a Table of Contents (toc).
+    toc_depth: 3
+    #This controls the number of subheadings included in the toc.
+    toc_float: true
+    #This allows toc to update relative to your location as you scroll down the html page.
+    code_folding: hide
+    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you open the document
+    
+    # More information: http://rmarkdown.rstudio.com/html_document_format.html
+---
+# Executive Summary
+This report examines the relationship between eating habits and productivity of university students. Specifically, it analyses:
+
+- How the amount of caffeine intake affects individual productivity.
+
+- How the number of meals affects individual productivity. 
+
+As the amount of caffeine intake and the number of meals increase, the individual’s productivity also increases.
+
+# Full Report
+
+## Initial Data Analysis (IDA)
+### Source
+The data used was collected from a Google Form survey sent out to university students on Ed Discussions and through messages sent out by project members.  
+(https://forms.gle/bQDbGSTCYh7XsLQ59)
+
+### Structure
+The survey received 50 responses, each row of the dataset represents an individual participant. The dataset has 8 columns of variables:
+
+- 4 qualitative: gender, productivity timing, consume caffeine or not, past performance.
+
+- 4 quantitative: age, meal frequency, productivity rate, caffeine intake.
+
+### Limitations
+- Volunteer bias: The survey was introduced as “investigating how eating habits affect productivity”, therefore, those who responded might be more interested in this topic than those who don’t, leading to a non-representative sample.  
+
+- Measurement bias: The question “How many times a day do you consume food? (snacks and meals or a beverage without eating). Enter a whole number”, is ambiguous as there is no definition provided for 1 unit of food or beverage. Additionally, since the survey required a whole number response, participants may have rounded their answers, leading to inaccurate data. 
+
+### Assumptions
+The survey collected 50 students’ number of meals, 46 responses range from 2 to 6, however, 4 responses are outliers at 7, 10, 12. It was assumed that these students have special dietary habits or religious purposes that influence meal frequency. 
+
+### Data Cleaning
+Command read_csv classifies the columns when the dataset was imported. The column labels were changed from question format to short and precise names for convenience and reusability.
+```{r, warning = FALSE, message = FALSE}
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+data = read.csv("~/Desktop/DATA1001/Group7Survey.csv")
+colnames(data) = c(
+  "timestamp",
+  "age",
+  "gender",
+  "foodFrequency",
+  "productivityTiming",
+  "consumesCaffeine",
+  "pastPerformance",
+  "productivityRate",
+  "caffeineInMg"
+)
+```
+### R’s Summary of the Data
+```{r, warning = FALSE}
+# Quick look at top 5 rows of data
+head(data)
+## Size of data
+dim(data)
+## R's classification of data
+class(data)
+## R's classification of variables
+str(data)
+```
+## Research Question 1
+Does the amount of caffeine consumed impact an individual's productivity after drinking coffee?
+
+```{r, warning = FALSE, message = FALSE}
+library(ggthemes)
+library(ggplot2)
+library(tidyverse)
+# variable for noncaffeine consumers
+nonCaffeine = subset(data, caffeineInMg == 0)
+# variable for caffeine consumers 
+normalCaffeine = subset(data, caffeineInMg < 400 & caffeineInMg > 0)
+# variable for all caffeine consumers 
+caffeineConsumers = subset(data, caffeineInMg >0)
+# variable for high caffeine consumers
+highCaffeine = subset(data, caffeineInMg >= 400)
+
+#boxplot
+ggplot(data, aes(x = pastPerformance, y = caffeineInMg, fill = pastPerformance)) +
+  geom_boxplot() +
+  labs(title = "Caffeine Intake by Past Performance",
+       x = "Past Performance",
+       y = "Caffeine Intake (mg)",
+       fill = "Past Performance") +
+  scale_fill_brewer(palette = "Set3") +
+  theme_calc() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title = element_text(size = 14),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        axis.text.x = element_text(angle = 45, hjust = 1)) + coord_flip()
+
+#bar chart
+datanew = data.frame(
+  Group = c("Overall", "Non Caffeine Consumers", "Normal Caffeine Consumers", "All Caffeine Consumers", "High Caffeine Consumers"),
+  MeanProductivity = c(6.02, 5.76, 5.39, 6.15, 7.9),
+  SD = c(2.04, 1.95, 1.67, 2.10, 1.52)
+)
+#code of ggplot
+ggplot(datanew, aes(x = Group, y = MeanProductivity, fill = Group)) +
+  geom_bar(stat = "identity", width = 0.6, color = "black") +
+  labs(title = "Productivity Rates by Caffeine Consumption",
+       x = "Group",
+       y = "Mean Productivity Rate") +
+  theme_calc() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title = element_text(size = 14),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        axis.text.x = element_text(angle = 45, hjust = 1))  
+```
+
+The method used for this question involved the use of two graphs to analyse the correlation between caffeine consumption and productivity. Initially, a box plot was used to depict the difference between caffeine consumption (dependent variable) among individuals with differing past performances (independent variable). 
+
+This plot was seen to be skewed to the right, with a mean surpassing its median. 
+
+For the second graph, responses were categorised into groups based on caffeine levels: non-consumers (0mg), normal consumers (>0mg but <400mg), high consumers (≥400mg), and an overall category encompassing all caffeine consumers. 
+
+These groups were then plotted against mean productivity in an accumulative bar plot, in which the overall mean and correlation coefficient turned out to be 6.15 and 0.48, respectively. 
+
+Furthermore, this graph revealed that high caffeine consumers, though the smallest in quantity, reported the highest average productivity. Conversely, non-consumers, while not the lowest, displayed a lower average productivity compared to the mean. However, this could be a result of the high caffeine consumers’ mean (7.9) skewing the average mean. 
+
+Nonetheless, this suggests a moderate positive correlation between caffeine intake and productivity.
+
+## Research Question 2
+What is the relationship between the number of meals students eat and their productivity?
+
+```{r, warning = FALSE, message = FALSE}
+#Q2
+# linear regression 
+ggplot(data, aes(x = foodFrequency, y = productivityRate)) + geom_point(colour="blue",size =3, alpha=0.7) +   geom_smooth(method = "lm", linetype="dashed", color="red", size =1) +   labs( title = "The Relationship Between the Frequency of Eating and Daily Productivity", x = "Frequency of Food Consumption (daily)",  y = "Productivity Rating an hour after eating (Scale of 1 - 10)" ) +  scale_y_continuous(breaks = seq(0, 10, by = 1)) +  scale_x_continuous(breaks = seq(0, 15, by = 1)) + theme_calc() + theme(plot.title = element_text(size = 13, face = "bold", hjust = 0.5), axis.title = element_text(size = 13)) 
+
+correlation <- cor(data$foodFrequency, data$productivityRate)
+cat("Correlation coefficient is:", correlation)
+```
+The linear graph displays the relationship between two quantitative variables assessed: The frequency of food consumption per day (including meals, snacks and beverages) and the individual's productivity an hour after eating, measured on a scale of 1 to 10. 
+
+The correlation coefficient (0.3, 2 d.p), suggests a weak, positive correlation between the 2 variables. While there may be a linear trend between the frequency of meals and productivity an hour after eating, the data suggests the relationship may better suit a normal approximation as there was a higher frequency of responses in the middle of the data set and less towards the extremities, in particular the higher values.
+
+```{r, warning = FALSE, meesage = FALSE}
+#residual
+data$Y = data$foodFrequency
+data$X = data$productivityRate
+
+#regression model
+model = lm(Y~X, data = data)
+
+#residuals
+res = resid(model)
+
+fitted_values = data.frame(.fitted=fitted(model), residuals = res)
+
+ggplot(data, aes(x = fitted_values$.fitted, y = fitted_values$residuals)) +
+  geom_point(color = "blue", size = 3, alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red", size = 1) +
+  labs(title = "Residual Plot for Daily Food Consumption on Productivity",
+       y = "Residuals",
+       x = "Productivity 1 Hour after Food Consumption") +
+  ylab("Residuals") +
+  xlab("Productivity 1 Hour after Food Consumption") +
+  theme_calc() +
+  theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+        axis.title = element_text(size = 14))
+```
+
+Linear plots have an entirely random distribution of data unlike the residual which shows a symmetrical pattern. As a result, a normal approximation may be a better choice for the model because the data is not well suited for a linear graph, aligning with the models expectations.
+
+## Articles
+Contrary to the results, a study on caffeine consumption suggested that high daily doses of caffeine (>400mg) had no significant effect on focus and concentration (Soós, R, Et al. 2021). However, the results support a study on productivity that links undereating with lower cognitive performance (Bhagwasia, M, Et al. 2023).
+
+# Reference
+Mayo Clinic. (2022, March 19). Caffeine. How much is too much? https://www.mayoclinic.org/healthy-lifestyle/nutrition-and-healthy-eating/in-depth/caffeine/art-20045678 
+
+Soós, R., Gyebrovszki, Á., Tóth, Á., Jeges, S., & Wilhelm, M. (2021). Effects of Caffeine and Caffeinated Beverages in Children, Adolescents and Young Adults: Short Review. International journal of environmental research and public health, 18(23), 12389. https://doi.org/10.3390/ijerph182312389
+
+Smith A. P. (2005). Caffeine at work. Human psychopharmacology, 20(6), 441–445. https://doi.org/10.1002/hup.705
+
+Bhagwasia, M., Rao, A. R., Banerjee, J., Bajpai, S., Raman, A. V., Talukdar, A., Jain, A., Rajguru, C., Sankhe, L., Goswami, D., Shanthi, G. S., Kumar, G., Varghese, M., Dhar, M., Gupta, M., A-Koul, P., Mohanty, R. R., Chakrabarti, S. S., Yadati, S. R., Dey, S., … Dey, A. B. (2023). Association Between Cognitive Performance and Nutritional Status: Analysis From LASI-DAD. Gerontology & geriatric medicine, 9, 23337214231194965. https://doi.org/10.1177/23337214231194965
+
+Marsja, E. (2023, February 19). How to Make a Residual Plot in R & Interpret Them using ggplot2. Erik Marsja. Retrieved April 13, 2024, from https://www.marsja.se/how-to-make-a-residual-plot-in-r-interpret-them-ggplot2/
+
+Warren, D. (2020, December 15). RGuide. Retrieved April 13, 2024, from https://diwarrensydney.github.io/index.html
+
+# Acknowledgements
+Meetings:
+
+05/03/24 3pm Zoom meeting: discussed research topic ideas, drafted survey questions | Hessa, Maya, Gedwen, Lam, Ashleigh, Darcie, Yahya, all group members in attendance
+
+11/04/24 2pm In person meeting: delegated tasks for report, discussed graph design | Maya, Lam, Ashleigh, Darcie, Yahya
+
+12/04/24 6pm Zoom meeting: further delegation of tasks | Lam, Hessa, Yahya
+
+15/04/24 5pm Online Chat: progress update on individual responsibilities | Hessa, Maya, Gedwen, Lam, Ashleigh, Darcie, Yahya, all group members in attendance
